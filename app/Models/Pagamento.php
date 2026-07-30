@@ -8,9 +8,8 @@ class Pagamento extends Model
 {
     protected $table = 'pagamento';
 
-    public $timestamps = false;
-
-    protected $fillable = ['metodo', 'status', 'pago_em'];
+    protected $fillable = ['id_pedido', 'metodo', 'status', 'pago_em'];
+    protected $cast = ['pago_em' => 'datetime'];
 
     public function Pedidos() {
         return this->belongsTo(Pedido::class, 'id_pedido');
