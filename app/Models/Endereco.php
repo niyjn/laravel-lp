@@ -13,11 +13,11 @@ class Endereco extends Model
     public $timestamps = false;
 
     public function pedidos() {
-        return this->hasMany(Pedido::class, 'id_endereco');
+        return $this->hasMany(Pedido::class, 'id_endereco');
     }
 
     public function cliente() {
-        return this->belongsTo(Cliente::class, 'id_cliente');
+        return $this->belongsTo(Cliente::class, 'id_cliente');
     }
 
 }

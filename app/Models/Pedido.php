@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Cassandra\Decimal;
 use Illuminate\Database\Eloquent\Model;
 
 class Pedido extends Model
@@ -15,20 +14,20 @@ class Pedido extends Model
 
     protected $fillable = ['id_cliente', 'id_endereco', 'status', 'valor', 'confirmado_em', 'enviado_em'];
 
-    protected $cast = [
+    protected $casts = [
     'valor' => 'decimal:2',
     'criado_em' => 'datetime', 'confirmado_em' => 'datetime', 'enviado_em' => 'datetime',
     ];
 
-    public function Clientes() {
+    public function Cliente() {
         return $this->belongsTo(Cliente::class, 'id_cliente');
     }
 
-    public function Enderecos() {
+    public function Endereco() {
         return $this->belongsTo(Endereco::class, 'id_endereco');
     }
 
-    public function Pagamentos() {
+    public function Pagamento() {
         return $this->hasMany(Pagamento::class, 'id_pedido');
     }
 
@@ -36,7 +35,7 @@ class Pedido extends Model
         return $this->hasMany(ProdutoPedido::class, 'id_pedido');
     }
 
-    public function Extratos() {
+    public function Extrato() {
         return $this->hasMany(Extrato::class, 'id_pedido');
     }
 }

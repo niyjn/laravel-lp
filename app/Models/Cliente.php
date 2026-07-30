@@ -14,10 +14,10 @@ class Cliente extends Model
     protected $casts    = ['created_at' => 'datetime'];
 
     public function enderecos() {
-        return this->hasMany(Endereco::class, 'id_cliente');
+        return $this->hasMany(Endereco::class, 'id_cliente');
     }
 
     public function pedidos() {
-        return this->hasMany(Pedido::class, 'id_cliente');
+        return $this->hasMany(Pedido::class, 'id_cliente');
     }
 }
