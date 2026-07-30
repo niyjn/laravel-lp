@@ -4,17 +4,22 @@ namespace App\Http\Controllers;
 
 use App\Models\Clique;
 
-class CliqueController extends Controller
+class ClienteController extends Controller
 {
-    public function store()
+    public function store(Request $request)
     {
-        Clique::create([
-            'botao' => 'pedir',
-            'data_hora' => now(),
+        $dados = request->validate([
+            'nome' => 'required|string|max:255',
+            'email' => 'required|email|unique:cliente,email',
+            'senha' => 'required|min:6'
+            ]);
+
+        $cliente = Cliente::create([
+            'nome' => $dados['nome'],
+            'email' => $dados['email'],
+            'senha_hash' => Hash::make($dados['senha']),
         ]);
 
-        return response()->json([
-            'status' => 'ok'
-        ]);
+        return redirect()->route('home');
     }
 }
