@@ -12,7 +12,6 @@ class Cliente extends Model
     protected $fillable = ['nome', 'email', 'senha_hash'];
     protected $hidden = ['senha_hash'];
     protected $casts    = ['created_at' => 'datetime'];
-
     public function enderecos() {
         return $this->hasMany(Endereco::class, 'id_cliente');
     }

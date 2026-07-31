@@ -28,7 +28,17 @@ class ExtratoController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $dados = $request->validate([
+            'id_pedido' => 'required|int',
+            'descricao' => 'required|string|max:255'
+        ]);
+
+        $endereco = Endereco::create([
+            'id_pedido' => $dados['id_pedido'],
+            'descricao' => $dados['descricao']
+        ]);
+
+        return redirect()->route('home');
     }
 
     /**
@@ -36,7 +46,7 @@ class ExtratoController extends Controller
      */
     public function show(extrato $extrato)
     {
-        //
+        return view('extrato.show', compact('extrato'));
     }
 
     /**
@@ -44,7 +54,7 @@ class ExtratoController extends Controller
      */
     public function edit(extrato $extrato)
     {
-        //
+        return view('extrato.edit', compact('extrato'));
     }
 
     /**
@@ -52,7 +62,14 @@ class ExtratoController extends Controller
      */
     public function update(Request $request, extrato $extrato)
     {
-        //
+        $dados = $request->validate([
+            'id_pedido' => 'required|int',
+            'descricao' => 'required|string|max:255'
+        ]);
+
+        $extrato->update($dados);
+
+        return redirect()->back();
     }
 
     /**
@@ -60,6 +77,8 @@ class ExtratoController extends Controller
      */
     public function destroy(extrato $extrato)
     {
-        //
+        $extrato->delete();
+
+        return redirect()->back();
     }
 }

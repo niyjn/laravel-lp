@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Clique;
+use App\Models\Cliente;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class ClienteController extends Controller
 {
     public function store(Request $request)
     {
-        $dados = request->validate([
+        $dados = $request->validate([
             'nome' => 'required|string|max:255',
             'email' => 'required|email|unique:cliente,email',
             'senha' => 'required|min:6'
@@ -21,5 +23,13 @@ class ClienteController extends Controller
         ]);
 
         return redirect()->route('home');
+    }
+
+    public function show() {
+        //
+    }
+
+    public function update() {
+
     }
 }
