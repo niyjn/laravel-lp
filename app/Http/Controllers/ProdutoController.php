@@ -12,7 +12,9 @@ class ProdutoController extends Controller
      */
     public function index()
     {
-        return Produto::all();
+        return view('produtos.index', [
+        'produtos' => Produto::where('ativo', true)->get(),
+        ]);
     }
 
     /**
