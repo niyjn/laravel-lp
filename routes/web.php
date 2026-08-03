@@ -50,6 +50,16 @@ Route::middleware('auth')->group(function() {
 Route::get('/produtos', [ProdutoController::class, 'index']);
 Route::get('/produtos/{produto}', [ProdutoController::class, 'show']);
 
+// Registro
+
+Route::get('/register', [AuthController::class, 'register'])
+            ->middleware('guest')
+            ->name('register');
+
+Route::post('/register', [AuthController::class, 'storeRegister'])
+            ->middleware('guest')
+             ->name('register.store');   
+
 // Produtos Admin
 Route::post('/produtos', [ProdutoController::class, 'store']);
 Route::patch('/produtos/{produto}', [ProdutoController::class, 'update']);

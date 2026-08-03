@@ -15,26 +15,70 @@
                   Baha Lanches
               </a>
 
-              <nav class="flex gap-8">
-                  <a href="#sobre" class="text-xl font-bold text-black hover:text-red-900">
-                      Sobre
-                  </a>
+              <nav class="flex flex-wrap items-center gap-4">
 
-                  <a href="#contato" class="text-xl font-bold text-black hover:text-red-900">
-                      Contato
-                  </a>
+    <a href="#sobre" class="text-xl font-bold text-black hover:text-red-900">
+        Sobre
+    </a>
 
-                  <button
-                       id="botao-carrinho"
-                       type="button"
-                       onclick="abrirCarrinho()"
-                       disabled
-                       class="rounded-lg bg-red-950 px-4 py-2 font-bold text-white disabled:cursor-not-allowed disabled:opacity-50"
-                   >
-                       Carrinho (<span id="quantidade-carrinho">0</span>)
-                   </button>
+    <a href="#contato" class="text-xl font-bold text-black hover:text-red-900">
+        Contato
+    </a>
 
-              </nav>
+
+    @auth
+
+        <a
+            href="{{ route('perfil') }}"
+            class="rounded-lg bg-red-950 px-4 py-2 font-bold text-white hover:bg-red-900"
+        >
+            Meu perfil
+        </a>
+
+
+        <form method="POST" action="{{ route('logout') }}">
+            @csrf
+
+            <button
+                type="submit"
+                class="rounded-lg bg-red-950 px-4 py-2 font-bold text-white hover:bg-red-900"
+            >
+                Sair
+            </button>
+        </form>
+
+
+    @else
+
+        <a
+            href="{{ route('register') }}"
+            class="rounded-lg bg-red-950 px-4 py-2 font-bold text-white hover:bg-red-900"
+        >
+            Criar conta
+        </a>
+
+
+        <a
+            href="{{ route('login') }}"
+            class="rounded-lg bg-red-950 px-4 py-2 font-bold text-white hover:bg-red-900"
+        >
+            Entrar
+        </a>
+
+    @endauth
+
+
+    <button
+        id="botao-carrinho"
+        type="button"
+        onclick="abrirCarrinho()"
+        disabled
+        class="rounded-lg bg-red-950 px-4 py-2 font-bold text-white disabled:cursor-not-allowed disabled:opacity-50"
+    >
+        Carrinho (<span id="quantidade-carrinho">0</span>)
+    </button>
+
+</nav>
           </div>
       </header>
 
@@ -75,7 +119,7 @@
                 <div class="mt-10 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
                     @forelse ($produtos as $produto)
                         <article class="flex aspect-square flex-col overflow-hidden rounded-2xl bg-white text-black shadow-xl">
-                            <div class="flex min-h-0 flex-1 items-center justify-center bg-gradient-to-br from-yellow-300 to-orange-500">
+                            <div class="flex min-h-0 flex-1 items-center justify-center bg-linear-to-br from-yellow-300 to-orange-500">
                                 {{-- Quando houver imagem_url no banco, esta parte exibirá a foto. --}}
                                 @if (! empty($produto->imagem_url))
                                     <img
@@ -298,7 +342,7 @@
       Total: ${formatarPreco(total)}`;
 
               window.open(
-                  `https://wa.me/5542999999999?text=${encodeURIComponent(mensagem)}`,
+                  `https://wa.me/554299307151?text=${encodeURIComponent(mensagem)}`,
                   '_blank',
               );
           }
