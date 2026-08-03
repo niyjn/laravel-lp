@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Cliente;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 
 class ClienteController extends Controller
 {
@@ -25,11 +26,34 @@ class ClienteController extends Controller
         return redirect()->route('home');
     }
 
-    public function show() {
-        //
+    public function show(Cliente $cliente) {
+        return view('clientes.profile', compact('cliente'));
     }
 
-    public function update() {
+    public function update(Request $request) {
+        $cliente = $request->user();
 
+        $dados = $request->validate([
+            'nome' => 'sometimes|required|string|max:255',
+            'email' => ['sometimes', 'required', 'string', 'email',
+            Rule::unique('cliente', 'email')->ignore($cliente->id)],
+            'senha' => 'sometimes|nullable|string|min:6|confirmed',
+        ]);
+
+        if($request->filled('senha')) {
+            $dados['senha_hash'] = Hash::make($dados['senha']);
+        }
+
+        unset($dados['senha']);
+
+        $cliente->update($dados);
+
+        return redirect()->back();
+    }
+
+    public function profile(Request $request) {
+            return view('clientes.profile', [
+                'cliente' => $request->user(),
+            ]);
     }
 }

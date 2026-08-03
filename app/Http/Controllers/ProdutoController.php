@@ -17,6 +17,16 @@ class ProdutoController extends Controller
         ]);
     }
 
+    public function landing()
+    {
+        $produtos = Produto::where('ativo', true)
+            ->orderBy('nome')
+            ->get();
+
+        return view('landing', compact('produtos'));
+    }
+
+
     /**
      * Show the form for creating a new resource.
      */

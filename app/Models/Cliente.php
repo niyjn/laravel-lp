@@ -2,9 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class Cliente extends Model
+
+class Cliente extends Authenticatable
 {
     protected $table = 'cliente';
     const UPDATED_AT = null;
@@ -18,5 +19,9 @@ class Cliente extends Model
 
     public function pedidos() {
         return $this->hasMany(Pedido::class, 'id_cliente');
+    }
+
+    public function getAuthPassword() {
+        return $this->senha_hash;
     }
 }

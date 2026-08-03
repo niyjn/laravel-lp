@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
+
 
 
 use App\Http\Controllers\{
@@ -10,16 +12,38 @@ use App\Http\Controllers\{
     PagamentoController,
     PedidoController,
     ProdutoController,
-    ProdutoPedidoController
+    ProdutoPedidoController,
+    AuthController
 };
 
 
-Route::inertia('/', 'Landing')->name('home');
+Route::get('/', [ProdutoController::class, 'landing'])->name('home');
 
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
+// login
+
+Route::get('/login', [AuthController::class, 'create'])
+    ->middleware('guest')
+    ->name('login');
+
+Route::post('/login', [AuthController::class, 'store'])
+    ->middleware('guest')
+    ->name('login.store');
+
+Route::middleware('auth')->group(function() {
+    Route::get('/perfil', [ClienteController::class, 'profile'])
+             ->name('perfil');
+
+         Route::patch('/perfil', [ClienteController::class, 'update'])
+             ->name('perfil.update');
+
+         Route::post('/logout', [AuthController::class, 'destroy'])
+             ->name('logout');
+
+});
 
 
 // Produtos user
@@ -34,7 +58,7 @@ Route::delete('/produtos/{produto}', [ProdutoController::class, 'destroy']);
 // Clientes
 Route::post('/clientes', [ClienteController::class, 'store']);
 Route::get('/clientes/{cliente}', [ClienteController::class, 'show']);
-Route::patch('/clientes/{cliente}', [ClienteController::class, 'update']);
+
 
 
 //Route::get('/me', [AuthController])
