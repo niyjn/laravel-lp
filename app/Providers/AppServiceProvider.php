@@ -2,6 +2,10 @@
 
 namespace App\Providers;
 
+use App\Models\Cliente;
+use Illuminate\Support\Facades\Gate;
+
+
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
@@ -24,6 +28,11 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->configureDefaults();
+
+        Gate::define('gerenciar-produtos', function (Cliente $cliente): bool {
+                  return $cliente->is_admin;
+              });
+
     }
 
     /**
