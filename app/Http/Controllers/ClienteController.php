@@ -9,6 +9,9 @@ use Illuminate\Validation\Rule;
 
 class ClienteController extends Controller
 {
+    public function create() {
+        return view('clientes.create');
+    }
     public function store(Request $request)
     {
         $dados = $request->validate([
@@ -23,7 +26,11 @@ class ClienteController extends Controller
             'senha_hash' => Hash::make($dados['senha']),
         ]);
 
-        return redirect()->route('home');
+        Auth::login($cliente);
+
+        $request->session()->regenerate();
+
+        return redirect()->route('perfil');
     }
 
     public function show(Cliente $cliente) {

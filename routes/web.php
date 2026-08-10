@@ -23,15 +23,25 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-// login
+Route::middleware('guest')->group(function () {
+      Route::get('/login', [AuthController::class, 'create'])
+          ->name('login');
 
-Route::get('/login', [AuthController::class, 'create'])
-    ->middleware('guest')
-    ->name('login');
+      Route::post('/login', [AuthController::class, 'store'])
+          ->name('login.store');
 
-Route::post('/login', [AuthController::class, 'store'])
+      Route::get('/cadastro', [ClienteController::class, 'create'])
+          ->name('register');
+
+      Route::post('/cadastro', [ClienteController::class, 'store'])
+          ->name('register.store');
+  });
+
+
+
+Route::post('/clientes', [ClienteController::class, 'store'])
     ->middleware('guest')
-    ->name('login.store');
+    ->name('login.clientes');
 
 Route::middleware('auth')->group(function() {
     Route::get('/perfil', [ClienteController::class, 'profile'])

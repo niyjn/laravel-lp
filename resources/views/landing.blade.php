@@ -16,13 +16,24 @@
               </a>
 
               <nav class="flex gap-8">
-                  <a href="#sobre" class="text-xl font-bold text-black hover:text-red-900">
-                      Sobre
-                  </a>
+                  @guest
+                       <a href="{{ route('login') }}" class="font-bold text-black">
+                           Entrar
+                       </a>
 
-                  <a href="#contato" class="text-xl font-bold text-black hover:text-red-900">
-                      Contato
-                  </a>
+                       <a
+                           href="{{ route('register') }}"
+                           class="rounded-lg bg-red-950 px-4 py-2 font-bold text-white"
+                       >
+                           Criar conta
+                       </a>
+                   @endguest
+
+                   @auth
+                       <a href="{{ route('perfil') }}" class="font-bold text-black">
+                           Meu perfil
+                       </a>
+                   @endauth
 
                   <button
                        id="botao-carrinho"
