@@ -37,12 +37,6 @@ Route::middleware('guest')->group(function () {
           ->name('register.store');
   });
 
-
-
-Route::post('/clientes', [ClienteController::class, 'store'])
-    ->middleware('guest')
-    ->name('login.clientes');
-
 Route::middleware('auth')->group(function() {
     Route::get('/perfil', [ClienteController::class, 'profile'])
              ->name('perfil');
@@ -54,15 +48,27 @@ Route::middleware('auth')->group(function() {
              ->name('logout');
 
         //endereco
-        Route::get('/clientes/{cliente}/endereco', [EnderecoController::class, 'index']);
-        Route::post('/clientes/{cliente}/endereco', [EnderecoController::class, 'store']);
-        Route::patch('/endereco/{endereco}', [EnderecoController::class, 'update']);
-        Route::delete('/endereco/{endereco}', [EnderecoController::class, 'destroy']);
+        Route::get('/enderecos', [EnderecoController::class, 'index'])
+            ->name('enderecos.index');
+
+        Route::get('/enderecos/novo', [EnderecoController::class, 'create'])
+            ->name('enderecos.create');
+
+        Route::post('/enderecos', [EnderecoController::class, 'store'])
+            ->name('enderecos.store');
+
+        Route::get('/enderecos/{endereco}/editar', [EnderecoController::class, 'edit'])
+            ->name('enderecos.edit');
+
+        Route::patch('/enderecos/{endereco}', [EnderecoController::class, 'update'])
+            ->name('enderecos.update');
+
+        Route::delete('/enderecos/{endereco}', [EnderecoController::class, 'destroy'])
+            ->name('enderecos.destroy');
 
         //pedido
         Route::get('/pedidos/{pedido}', [PedidoController::class, 'show']);
         Route::get('/pedidos', [PedidoController::class, 'index']);
-        Route::post('/pedidos/', [PedidoController::class, 'store']);
         Route::patch('/pedidos/{pedido}', [PedidoController::class, 'update']);
 
         //item
@@ -97,6 +103,7 @@ Route::middleware(['auth', 'can:gerenciar-produtos'])->group(function() {
 
     Route::get('/produtos/{produto}/edit', [ProdutoController::class, 'edit'])
         -> name('produtos.edit');
+
 });
 
 // Produtos user
@@ -105,3 +112,13 @@ Route::get('/produtos', [ProdutoController::class, 'index'])
 
 Route::get('/produtos/{produto}', [ProdutoController::class, 'show'])
     ->name('produtos.show');
+
+// Pedido & checkout
+
+Route::get('/checkout', [PedidoController::class, 'create'])
+          ->middleware('auth')
+          ->name('checkout');
+
+Route::post('/pedidos', [PedidoController::class, 'store'])
+          ->middleware('auth')
+          ->name('pedidos.store');

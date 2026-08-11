@@ -6,6 +6,7 @@ use App\Models\Cliente;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Auth;
 
 class ClienteController extends Controller
 {
@@ -17,7 +18,7 @@ class ClienteController extends Controller
         $dados = $request->validate([
             'nome' => 'required|string|max:255',
             'email' => 'required|email|unique:cliente,email',
-            'senha' => 'required|min:6'
+            'senha' => 'required|min:6|string|confirmed'
             ]);
 
         $cliente = Cliente::create([
@@ -55,7 +56,10 @@ class ClienteController extends Controller
 
         $cliente->update($dados);
 
-        return redirect()->back();
+        return redirect()
+              ->back()
+              ->with('success', 'Perfil atualizado com sucesso.');
+
     }
 
     public function profile(Request $request) {

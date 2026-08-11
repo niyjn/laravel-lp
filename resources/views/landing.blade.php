@@ -17,7 +17,7 @@
 
               <nav class="flex gap-8">
                   @guest
-                       <a href="{{ route('login') }}" class="font-bold text-black">
+                       <a href="{{ route('login') }}" class="rounded-lg bg-red-950 px-4 py-2 font-bold text-white">
                            Entrar
                        </a>
 
@@ -30,10 +30,17 @@
                    @endguest
 
                    @auth
-                       <a href="{{ route('perfil') }}" class="font-bold text-black">
+                       <a href="{{ route('perfil') }}" class="rounded-lg bg-red-950 px-4 py-2 font-bold text-white" >
                            Meu perfil
                        </a>
                    @endauth
+
+                   @can('gerenciar-produtos')
+                       <a href="{{ route('produtos.index') }}" class="rounded-lg bg-red-950 px-4 py-2 font-bold text-white" >
+                           Painel administrativo
+                       </a>
+                   @endcan
+
 
                   <button
                        id="botao-carrinho"
@@ -166,10 +173,10 @@
 
               <button
                   type="button"
-                  onclick="abrirWhatsApp()"
+                  onclick="irParaCheckout()"
                   class="mt-6 w-full rounded-lg bg-yellow-500 px-4 py-3 font-bold text-black"
               >
-                  Finalizar pedido no WhatsApp
+                  Continuar para checkout
               </button>
           </section>
       </div>
@@ -288,30 +295,15 @@
               document.querySelector('#total-carrinho').textContent = formatarPreco(total);
           }
 
-          function abrirWhatsApp() {
-              const itens = [...carrinho.values()];
+          function irParaCheckout() {
+              if (carrinho.size === 0) {
+                  alert('Seu carrinho está vazio.');
+                  return;
+              }
 
-              const linhas = itens.map((item) => {
-                  const subtotal = item.preco * item.quantidade;
-
-                  return `${item.quantidade}x ${item.nome} — ${formatarPreco(subtotal)}`;
-              });
-
-              const total = itens.reduce(
-                  (soma, item) => soma + item.preco * item.quantidade,
-                  0,
-              );
-
-              const mensagem = `Olá! Gostaria de pedir:
-
-      ${linhas.join('\n')}
-
-      Total: ${formatarPreco(total)}`;
-
-              window.open(
-                  `https://wa.me/5542999999999?text=${encodeURIComponent(mensagem)}`,
-                  '_blank',
-              );
+              // Se não houver sessão, o middleware auth levará ao login.
+              // O carrinho continua salvo no localStorage durante esse fluxo.
+              window.location.href = @json(route('checkout'));
           }
       </script>
 

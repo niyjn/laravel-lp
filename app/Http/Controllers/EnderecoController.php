@@ -10,9 +10,11 @@ class EnderecoController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-
+        return view('enderecos.index', [
+            'enderecos' => $request->user()->enderecos,
+        ]);
     }
 
 
@@ -20,7 +22,6 @@ class EnderecoController extends Controller
     {
 
         $dados = $request->validate([
-            'id_pedido' => 'required|integer',
             'logradouro' => 'required|string|max:60',
             'numero' => 'required|string|max:15',
             'bairro' => 'required|string|max:30',
@@ -30,34 +31,43 @@ class EnderecoController extends Controller
             'complemento' => 'nullable|string|max:100'
         ]);
 
-        $endereco = Endereco::create([
-            'id_pedido' => $dados['id_pedido'],
-            'logradouro' => $dados['logradouro'],
-            'numero' => $dados['numero'],
-            'bairro' => $dados['bairro'],
-            'cidade' => $dados['cidade'],
-            'estado' => $dados['estado'],
-            'cep' => $dados['cep'],
-            'complemento' => $dados['complemento']
-        ]);
+        $request->user()->enderecos()->create($dados);
 
-        return redirect()->route('home');
+        return redirect()
+                  ->route('enderecos.index')
+                  ->with('success', 'Endereço cadastrado com sucesso.');
     }
 
-    public function show(endereco $endereco)
+    public function create()
+    {
+        return view('enderecos.create');
+    }
+
+
+    public function show(Endereco $endereco)
     {
         return view('enderecos.show', compact('endereco'));
     }
 
 
-    public function edit(endereco $endereco)
+    public function edit(Endereco $endereco, Request $requests)
     {
+        abort_unless(
+              $endereco->id_cliente === $request->user()->id,
+              403,
+          );
+
         return view('enderecos.edit', compact('endereco'));
     }
 
 
-    public function update(Request $request, endereco $endereco)
+    public function update(Request $request, Endereco $endereco)
     {
+        abort_unless(
+              $endereco->id_cliente === $request->user()->id,
+              403,
+          );
+
         $dados = $request->validate([
             'logradouro' => 'required|string|max:60',
             'numero' => 'required|string|max:15',
@@ -73,8 +83,13 @@ class EnderecoController extends Controller
         return redirect()->back();
     }
 
-    public function destroy(endereco $endereco)
+    public function destroy(Endereco $endereco, Request $request)
     {
+        abort_unless(
+              $endereco->id_cliente === $request->user()->id,
+              403,
+          );
+
         $endereco->delete();
 
         return redirect()->route('home');

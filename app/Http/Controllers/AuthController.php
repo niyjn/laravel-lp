@@ -28,7 +28,7 @@ class AuthController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->route('perfil');
+        return redirect()->intended(route('perfil'));
     }
 
     public function create() {

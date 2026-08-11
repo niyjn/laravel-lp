@@ -31,7 +31,7 @@ class Pedido extends Model
         return $this->hasMany(Pagamento::class, 'id_pedido');
     }
 
-    public function Itens() {
+    public function itens() {
         return $this->hasMany(ProdutoPedido::class, 'id_pedido');
     }
 
