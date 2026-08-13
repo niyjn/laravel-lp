@@ -33,6 +33,10 @@
                        <a href="{{ route('perfil') }}" class="rounded-lg bg-red-950 px-4 py-2 font-bold text-white" >
                            Meu perfil
                        </a>
+
+                       <a href="{{ route('pedidos.index') }}" class="rounded-lg bg-red-950 px-4 py-2 font-bold text-white">
+                           Meus pedidos
+                       </a>
                    @endauth
 
                    @can('gerenciar-produtos')

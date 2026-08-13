@@ -14,10 +14,17 @@ class PedidoController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        return $pedidos = Pedido::all();
-    }
+     public function index(Request $request)
+      {
+          return view('pedidos.index', [
+              'pedidos' => $request->user()
+                  ->pedidos()
+                  ->orderByDesc('criado_em')
+                  ->get(),
+          ]);
+      }
+
+
 
     /**
      * Show the form for creating a new resource.
@@ -64,7 +71,7 @@ class PedidoController extends Controller
                   $valorTotal = 0;
 
                   foreach ($dados['itens'] as $item) {
-                      // Preço oficial vem sempre do banco.
+                      // Preço oficial vem do banco.
                       $produto = Produto::where('ativo', true)
                           ->find($item['produto_id']);
 
@@ -97,16 +104,23 @@ class PedidoController extends Controller
               });
 
               return redirect()
-                  ->route('checkout')
+                  ->route('pedidos.show', $pedido)
                   ->with('success', "Pedido #{$pedido->id} criado com sucesso.");
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(pedido $pedido)
+    public function show(Request $request, Pedido $pedido)
     {
-        //
+        abort_unless(
+                  $pedido->id_cliente === $request->user()->id,
+                  403,
+              );
+
+        $pedido->load(['itens.produto', 'endereco']);
+
+        return view('pedidos.show', compact('pedido'));
     }
 
     /**

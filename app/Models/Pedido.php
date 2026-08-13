@@ -19,15 +19,15 @@ class Pedido extends Model
     'criado_em' => 'datetime', 'confirmado_em' => 'datetime', 'enviado_em' => 'datetime',
     ];
 
-    public function Cliente() {
+    public function cliente() {
         return $this->belongsTo(Cliente::class, 'id_cliente');
     }
 
-    public function Endereco() {
+    public function endereco() {
         return $this->belongsTo(Endereco::class, 'id_endereco');
     }
 
-    public function Pagamento() {
+    public function pagamento() {
         return $this->hasMany(Pagamento::class, 'id_pedido');
     }
 
@@ -35,7 +35,7 @@ class Pedido extends Model
         return $this->hasMany(ProdutoPedido::class, 'id_pedido');
     }
 
-    public function Extrato() {
+    public function extrato() {
         return $this->hasMany(Extrato::class, 'id_pedido');
     }
 }

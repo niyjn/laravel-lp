@@ -67,8 +67,11 @@ Route::middleware('auth')->group(function() {
             ->name('enderecos.destroy');
 
         //pedido
-        Route::get('/pedidos/{pedido}', [PedidoController::class, 'show']);
-        Route::get('/pedidos', [PedidoController::class, 'index']);
+        Route::get('/pedidos', [PedidoController::class, 'index'])
+            ->name('pedidos.index');
+
+        Route::get('/pedidos/{pedido}', [PedidoController::class, 'show'])
+            ->name('pedidos.show');
         Route::patch('/pedidos/{pedido}', [PedidoController::class, 'update']);
 
         //item
