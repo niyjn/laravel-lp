@@ -62,8 +62,8 @@ export default function Landing() {
 
 
                 <p className="mt-6 font-bold text-white text-center max-w-xl">
-                    R. Profa. Leonidia, 1226 - Centro,
-                    Guarapuava - PR, 85010-230
+                    R. Comendador Norberto, 1299 - Santa Cruz,
+                    Guarapuava - PR
                 </p>
 
 

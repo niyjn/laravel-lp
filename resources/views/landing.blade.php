@@ -75,8 +75,8 @@
           </p>
 
           <p class="mt-6 max-w-xl text-center font-bold">
-              R. Profa. Leonidia, 1226 - Centro,<br>
-              Guarapuava - PR, 85010-230
+              R. Comendador Norberto, 1299 - Santa Cruz,<br>
+              Guarapuava - PR
           </p>
 
           <a
