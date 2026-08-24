@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 
 use App\Http\Controllers\{
+    AdminPedidoController,
     ClienteController,
     EnderecoController,
     PedidoController,
@@ -68,6 +69,15 @@ Route::middleware('auth')->group(function() {
 });
 
 Route::middleware(['auth', 'can:gerenciar-produtos'])->group(function() {
+    Route::get('/admin/pedidos', [AdminPedidoController::class, 'index'])
+        ->name('admin.pedidos.index');
+
+    Route::get('/admin/pedidos/{pedido}', [AdminPedidoController::class, 'show'])
+        ->name('admin.pedidos.show');
+
+    Route::patch('/admin/pedidos/{pedido}/status', [AdminPedidoController::class, 'updateStatus'])
+        ->name('admin.pedidos.status.update');
+
     // Produtos Admin
     Route::get('/produtos/create', [ProdutoController::class, 'create'])
         ->name('produtos.create');

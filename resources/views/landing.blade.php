@@ -40,8 +40,12 @@
                    @endauth
 
                    @can('gerenciar-produtos')
+                       <a href="{{ route('admin.pedidos.index') }}" class="rounded-lg bg-red-950 px-4 py-2 font-bold text-white" >
+                           Pedidos admin
+                       </a>
+
                        <a href="{{ route('produtos.index') }}" class="rounded-lg bg-red-950 px-4 py-2 font-bold text-white" >
-                           Painel administrativo
+                           Produtos admin
                        </a>
                    @endcan
 
