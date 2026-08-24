@@ -19,6 +19,7 @@
             <div class="mb-6 rounded-lg border border-green-300 bg-green-100 px-4 py-3 font-semibold text-green-900">
                 {{ session('success') }}
             </div>
+            <script>localStorage.removeItem('baha-carrinho');</script>
         @endif
 
         <div class="flex flex-wrap items-end justify-between gap-5">
@@ -62,25 +63,51 @@
                 </div>
             </section>
 
-            <aside class="h-fit rounded-2xl bg-white p-6 text-black shadow-2xl sm:p-8">
-                <p class="font-bold uppercase tracking-[0.2em] text-red-950">Entrega</p>
-                <h2 class="mt-1 font-jersey text-4xl text-red-950">Endereço</h2>
+            <aside class="space-y-6">
+                <section class="rounded-2xl bg-white p-6 text-black shadow-2xl sm:p-8">
+                    <p class="font-bold uppercase tracking-[0.2em] text-red-950">Entrega</p>
+                    <h2 class="mt-1 font-jersey text-4xl text-red-950">Endereço</h2>
 
-                @if ($pedido->endereco)
-                    <div class="mt-6 rounded-xl bg-gray-100 p-4">
-                        <p class="font-bold text-red-950">{{ $pedido->endereco->logradouro }}, {{ $pedido->endereco->numero }}</p>
-                        <p class="mt-1 text-gray-700">{{ $pedido->endereco->bairro }}</p>
-                        <p class="text-gray-700">{{ $pedido->endereco->cidade }}/{{ $pedido->endereco->estado }}</p>
-                        <p class="mt-1 text-sm text-gray-500">CEP {{ $pedido->endereco->cep }}</p>
-                        @if ($pedido->endereco->complemento)
-                            <p class="mt-3 text-sm text-gray-600">{{ $pedido->endereco->complemento }}</p>
-                        @endif
-                    </div>
-                @else
-                    <p class="mt-6 text-gray-600">Endereço não disponível.</p>
-                @endif
+                    @if ($pedido->endereco)
+                        <div class="mt-6 rounded-xl bg-gray-100 p-4">
+                            <p class="font-bold text-red-950">{{ $pedido->endereco->logradouro }}, {{ $pedido->endereco->numero }}</p>
+                            <p class="mt-1 text-gray-700">{{ $pedido->endereco->bairro }}</p>
+                            <p class="text-gray-700">{{ $pedido->endereco->cidade }}/{{ $pedido->endereco->estado }}</p>
+                            <p class="mt-1 text-sm text-gray-500">CEP {{ $pedido->endereco->cep }}</p>
+                            @if ($pedido->endereco->complemento)
+                                <p class="mt-3 text-sm text-gray-600">{{ $pedido->endereco->complemento }}</p>
+                            @endif
+                        </div>
+                    @else
+                        <p class="mt-6 text-gray-600">Endereço não disponível.</p>
+                    @endif
 
-                <a href="{{ route('home') }}#produtos" class="mt-6 block rounded-lg bg-yellow-500 px-4 py-3 text-center font-bold text-black transition hover:bg-yellow-400">Fazer novo pedido</a>
+                    <a href="{{ route('home') }}#produtos" class="mt-6 block rounded-lg bg-yellow-500 px-4 py-3 text-center font-bold text-black transition hover:bg-yellow-400">Fazer novo pedido</a>
+                </section>
+
+                @php
+                    $numeroWhatsapp = preg_replace('/\D/', '', (string) config('services.whatsapp.number'));
+                    $linhas = $pedido->itens->map(function ($item) {
+                        $subtotal = $item->quantidade * $item->preco_unitario;
+
+                        return "{$item->quantidade}x {$item->produto->nome} — R$ ".number_format($subtotal, 2, ',', '.');
+                    })->implode("\n");
+                    $mensagem = "Olá! Fiz o pedido #{$pedido->id}:\n\n{$linhas}\n\nTotal: R$ ".number_format($pedido->valor, 2, ',', '.');
+                @endphp
+
+                <section class="rounded-2xl bg-white p-6 text-black shadow-2xl sm:p-8">
+                    <p class="font-bold uppercase tracking-[0.2em] text-red-950">Pagamento</p>
+                    <h2 class="mt-1 font-jersey text-4xl text-red-950">Confirmação manual</h2>
+                    <p class="mt-4 text-gray-700">Seu pedido foi recebido e aguarda confirmação da loja. O pagamento não é confirmado automaticamente pelo site.</p>
+
+                    @if ($numeroWhatsapp)
+                        <a href="https://wa.me/{{ $numeroWhatsapp }}?text={{ urlencode($mensagem) }}" target="_blank" rel="noopener noreferrer" class="mt-5 block rounded-lg bg-green-600 px-4 py-3 text-center font-bold text-white transition hover:bg-green-700">
+                            Enviar pedido no WhatsApp
+                        </a>
+                    @else
+                        <p class="mt-5 rounded-lg bg-yellow-100 p-3 text-sm text-yellow-900">WhatsApp da loja ainda não foi configurado.</p>
+                    @endif
+                </section>
             </aside>
         </div>
     </main>
