@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Meus endereços — Baha Lanches</title>
+    <link rel="icon" href="{{ asset('fav.ico') }}" sizes="any">
     @vite('resources/css/app.css')
 </head>
 <body class="min-h-screen bg-red-950 text-white">
@@ -11,7 +12,7 @@
         <div class="mx-auto flex max-w-5xl items-center justify-between gap-4">
             <a href="{{ route('home') }}" class="font-jersey text-4xl text-black sm:text-5xl">Baha Lanches</a>
             <nav class="flex items-center gap-4">
-                <a href="{{ route('perfil') }}" class="font-bold text-black hover:underline">Meu perfil</a>
+                <a href="{{ route('perfil') }}" class="font-bold text-black hover:underline">← Perfil</a>
                 <a href="{{ route('checkout') }}" class="rounded-lg bg-red-950 px-3 py-2 text-sm font-bold text-white">Checkout</a>
             </nav>
         </div>

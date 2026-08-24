@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Criar conta - Baha Lanches</title>
+    <link rel="icon" href="{{ asset('fav.ico') }}" sizes="any">
     @vite('resources/css/app.css')
 </head>
 
@@ -18,6 +19,7 @@
         <p class="mt-2 text-center font-bold text-gray-700">
             Crie sua conta
         </p>
+        <a href="{{ route('home') }}" class="mt-5 inline-block font-bold text-red-950 hover:underline">← Voltar ao cardápio</a>
 
         @if ($errors->any())
             <div class="mt-6 rounded-lg bg-red-100 p-4 text-sm text-red-900">

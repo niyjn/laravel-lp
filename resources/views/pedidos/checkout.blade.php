@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Checkout — Baha Lanches</title>
+    <link rel="icon" href="{{ asset('fav.ico') }}" sizes="any">
     @vite('resources/css/app.css')
 </head>
 <body class="min-h-screen bg-red-950 text-white">

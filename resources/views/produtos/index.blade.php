@@ -4,13 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Produtos — Baha Lanches</title>
+    <link rel="icon" href="{{ asset('fav.ico') }}" sizes="any">
     @vite('resources/css/app.css')
 </head>
 <body class="min-h-screen bg-red-950 text-white">
     <header class="bg-yellow-500 px-4 py-5 shadow-lg sm:px-6">
         <div class="mx-auto flex max-w-6xl items-center justify-between gap-4">
             <a href="{{ route('home') }}" class="font-jersey text-4xl text-black sm:text-5xl">Baha Lanches</a>
-            <a href="{{ route('home') }}#produtos" class="font-bold text-black hover:underline">Cardápio</a>
+            <a href="{{ route('home') }}#produtos" class="font-bold text-black hover:underline">← Cardápio</a>
         </div>
     </header>
 

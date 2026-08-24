@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Meu perfil — Baha Lanches</title>
+    <link rel="icon" href="{{ asset('fav.ico') }}" sizes="any">
     @vite('resources/css/app.css')
 </head>
 <body class="min-h-screen bg-red-950 text-white">
@@ -11,7 +12,7 @@
         <div class="mx-auto flex max-w-3xl items-center justify-between gap-4">
             <a href="{{ route('home') }}" class="font-jersey text-4xl text-black sm:text-5xl">Baha Lanches</a>
             <nav class="flex items-center gap-4">
-                <a href="{{ route('produtos.index') }}" class="font-bold text-black hover:underline">Produtos</a>
+                <a href="{{ route('home') }}#produtos" class="font-bold text-black hover:underline">← Cardápio</a>
                 @can('gerenciar-produtos')
                     <a href="{{ route('produtos.index') }}" class="rounded-lg bg-red-950 px-3 py-2 text-sm font-bold text-white">Administrar</a>
                 @endcan

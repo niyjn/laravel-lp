@@ -4,6 +4,7 @@
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1">
       <title>Entrar — Baha Lanches</title>
+      <link rel="icon" href="{{ asset('fav.ico') }}" sizes="any">
 
       @vite('resources/css/app.css')
   </head>
@@ -12,8 +13,9 @@
       <main class="w-full max-w-md rounded-2xl bg-white p-8 shadow-2xl">
           <h1 class="font-jersey text-5xl text-red-950">Baha Lanches</h1>
           <p class="mt-2 text-gray-600">Entre na sua conta.</p>
+          <a href="{{ route('home') }}" class="mt-5 inline-block font-bold text-red-950 hover:underline">← Voltar ao cardápio</a>
 
-          <form method="POST" action="{{ route('login.store') }}" class="mt-8 space-y-5">
+          <form method="POST" action="{{ route('login.store') }}" class="mt-6 space-y-5">
               @csrf
 
               <div>

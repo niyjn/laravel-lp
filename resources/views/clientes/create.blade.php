@@ -4,6 +4,7 @@
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1">
       <title>Criar conta — Baha Lanches</title>
+      <link rel="icon" href="{{ asset('fav.ico') }}" sizes="any">
 
       @vite('resources/css/app.css')
   </head>
@@ -11,8 +12,9 @@
   <body class="flex min-h-screen items-center justify-center bg-red-950 p-4">
       <main class="w-full max-w-md rounded-2xl bg-white p-8 shadow-2xl">
           <h1 class="font-jersey text-5xl text-red-950">Criar conta</h1>
+          <a href="{{ route('home') }}" class="mt-4 inline-block font-bold text-red-950 hover:underline">← Voltar ao cardápio</a>
 
-          <form method="POST" action="{{ route('register.store') }}" class="mt-6 space-y-4">
+          <form method="POST" action="{{ route('register.store') }}" class="mt-4 space-y-4">
               @csrf
 
               <input
