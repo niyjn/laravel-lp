@@ -1,27 +1,19 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Illuminate\Http\Request;
 
 
 
 use App\Http\Controllers\{
     ClienteController,
     EnderecoController,
-    ExtratoController,
-    PagamentoController,
     PedidoController,
     ProdutoController,
-    ProdutoPedidoController,
     AuthController
 };
 
 
 Route::get('/', [ProdutoController::class, 'landing'])->name('home');
-
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
 
 Route::middleware('guest')->group(function () {
       Route::get('/login', [AuthController::class, 'create'])
@@ -72,21 +64,6 @@ Route::middleware('auth')->group(function() {
 
         Route::get('/pedidos/{pedido}', [PedidoController::class, 'show'])
             ->name('pedidos.show');
-        Route::patch('/pedidos/{pedido}', [PedidoController::class, 'update']);
-
-        //item
-        Route::post('/pedidos/{pedido}/itens', [ProdutoPedidoController::class, 'store']);
-        Route::patch('/item-pedido/{item}', [ProdutoPedidoController::class, 'update']);
-        Route::delete('/item-pedido/{item}', [ProdutoPedidoController::class, 'destroy']);
-
-        //pagamento
-        Route::post('/pedidos/{pedido}/pagamento', [PagamentoController::class, 'store']);
-        Route::get('/pedidos/{pedido}/pagamento', [PagamentoController::class, 'show']);
-        Route::patch('/pedidos/{pedido}/pagamento', [PagamentoController::class, 'update']);
-
-        //extrato
-        Route::get('/pedidos/{pedido}/extrato', [ExtratoController::class, 'show']);
-        Route::get('/pedidos/extrato', [ExtratoController::class, 'index']);
 
 });
 

@@ -50,7 +50,7 @@ class EnderecoController extends Controller
     }
 
 
-    public function edit(Endereco $endereco, Request $requests)
+    public function edit(Request $request, Endereco $endereco)
     {
         abort_unless(
               $endereco->id_cliente === $request->user()->id,
@@ -80,7 +80,9 @@ class EnderecoController extends Controller
 
         $endereco->update($dados);
 
-        return redirect()->back();
+        return redirect()
+            ->route('enderecos.index')
+            ->with('success', 'Endereço atualizado com sucesso.');
     }
 
     public function destroy(Endereco $endereco, Request $request)
@@ -92,6 +94,8 @@ class EnderecoController extends Controller
 
         $endereco->delete();
 
-        return redirect()->route('home');
+        return redirect()
+            ->route('enderecos.index')
+            ->with('success', 'Endereço excluído com sucesso.');
     }
 }
