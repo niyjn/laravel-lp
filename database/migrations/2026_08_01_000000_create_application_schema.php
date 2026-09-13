@@ -136,6 +136,13 @@ return new class extends Migration
      */
     public function down(): void
     {
-        // Intentionally left blank.
+        Schema::dropIfExists('produto_pedido');
+        Schema::dropIfExists('extrato');
+        Schema::dropIfExists('pagamento');
+        Schema::dropIfExists('pedido');
+        Schema::dropIfExists('endereco');
+        Schema::dropIfExists('produto');
+        Schema::dropIfExists('cliente');
+        Schema::dropIfExists('sessions');
     }
 };
