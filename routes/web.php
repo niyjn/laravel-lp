@@ -2,73 +2,54 @@
 
 use Illuminate\Support\Facades\Route;
 
-
-
 use App\Http\Controllers\{
     AdminPedidoController,
     ClienteController,
     EnderecoController,
     PedidoController,
-    ProdutoController,
-    AuthController
+    ProdutoController
 };
-
 
 Route::get('/', [ProdutoController::class, 'landing'])->name('home');
 
-Route::middleware('guest')->group(function () {
-      Route::get('/login', [AuthController::class, 'create'])
-          ->name('login');
+// Breeze Authentication Routes
+require __DIR__.'/auth.php';
 
-      Route::post('/login', [AuthController::class, 'store'])
-          ->name('login.store');
-
-      Route::get('/cadastro', [ClienteController::class, 'create'])
-          ->name('register');
-
-      Route::post('/cadastro', [ClienteController::class, 'store'])
-          ->name('register.store');
-  });
-
-Route::middleware('auth')->group(function() {
+Route::middleware('auth')->group(function () {
     Route::get('/perfil', [ClienteController::class, 'profile'])
-             ->name('perfil');
+        ->name('perfil');
 
-         Route::patch('/perfil', [ClienteController::class, 'update'])
-             ->name('perfil.update');
+    Route::patch('/perfil', [ClienteController::class, 'update'])
+        ->name('perfil.update');
 
-         Route::post('/logout', [AuthController::class, 'destroy'])
-             ->name('logout');
+    // Enderecos
+    Route::get('/enderecos', [EnderecoController::class, 'index'])
+        ->name('enderecos.index');
 
-        //endereco
-        Route::get('/enderecos', [EnderecoController::class, 'index'])
-            ->name('enderecos.index');
+    Route::get('/enderecos/novo', [EnderecoController::class, 'create'])
+        ->name('enderecos.create');
 
-        Route::get('/enderecos/novo', [EnderecoController::class, 'create'])
-            ->name('enderecos.create');
+    Route::post('/enderecos', [EnderecoController::class, 'store'])
+        ->name('enderecos.store');
 
-        Route::post('/enderecos', [EnderecoController::class, 'store'])
-            ->name('enderecos.store');
+    Route::get('/enderecos/{endereco}/editar', [EnderecoController::class, 'edit'])
+        ->name('enderecos.edit');
 
-        Route::get('/enderecos/{endereco}/editar', [EnderecoController::class, 'edit'])
-            ->name('enderecos.edit');
+    Route::patch('/enderecos/{endereco}', [EnderecoController::class, 'update'])
+        ->name('enderecos.update');
 
-        Route::patch('/enderecos/{endereco}', [EnderecoController::class, 'update'])
-            ->name('enderecos.update');
+    Route::delete('/enderecos/{endereco}', [EnderecoController::class, 'destroy'])
+        ->name('enderecos.destroy');
 
-        Route::delete('/enderecos/{endereco}', [EnderecoController::class, 'destroy'])
-            ->name('enderecos.destroy');
+    // Pedidos
+    Route::get('/pedidos', [PedidoController::class, 'index'])
+        ->name('pedidos.index');
 
-        //pedido
-        Route::get('/pedidos', [PedidoController::class, 'index'])
-            ->name('pedidos.index');
-
-        Route::get('/pedidos/{pedido}', [PedidoController::class, 'show'])
-            ->name('pedidos.show');
-
+    Route::get('/pedidos/{pedido}', [PedidoController::class, 'show'])
+        ->name('pedidos.show');
 });
 
-Route::middleware(['auth', 'can:gerenciar-produtos'])->group(function() {
+Route::middleware(['auth', 'can:gerenciar-produtos'])->group(function () {
     Route::get('/admin/pedidos', [AdminPedidoController::class, 'index'])
         ->name('admin.pedidos.index');
 
@@ -92,8 +73,7 @@ Route::middleware(['auth', 'can:gerenciar-produtos'])->group(function() {
         ->name('produtos.destroy');
 
     Route::get('/produtos/{produto}/edit', [ProdutoController::class, 'edit'])
-        -> name('produtos.edit');
-
+        ->name('produtos.edit');
 });
 
 // Produtos user
@@ -104,11 +84,10 @@ Route::get('/produtos/{produto}', [ProdutoController::class, 'show'])
     ->name('produtos.show');
 
 // Pedido & checkout
-
 Route::get('/checkout', [PedidoController::class, 'create'])
-          ->middleware('auth')
-          ->name('checkout');
+    ->middleware('auth')
+    ->name('checkout');
 
 Route::post('/pedidos', [PedidoController::class, 'store'])
-          ->middleware('auth')
-          ->name('pedidos.store');
+    ->middleware('auth')
+    ->name('pedidos.store');
