@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\ProdutoComPedidosVinculadosException;
+use App\Http\Requests\StoreProdutoRequest;
+use App\Http\Requests\UpdateProdutoRequest;
 use App\Models\Produto;
-use Illuminate\Http\Request;
 
 class ProdutoController extends Controller
 {
@@ -37,16 +38,9 @@ class ProdutoController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreProdutoRequest $request)
     {
-        $this->authorize('create', Produto::class);
-
-        $dados = $request->validate([
-            'nome' => 'required|string|max:255',
-            'descricao' => 'required|string|max:255',
-            'preco' => 'required|numeric|min:0',
-            'ativo' => 'sometimes|boolean',
-        ]);
+        $dados = $request->validated();
 
         $produto = Produto::create([
             'nome' => $dados['nome'],
@@ -55,7 +49,9 @@ class ProdutoController extends Controller
             'ativo' => $dados['ativo'] ?? false,
         ]);
 
-        return redirect()->route('produtos.index')->with('success', 'Produto criado com sucesso.');
+        return redirect()
+            ->route('produtos.index')
+            ->with('success', 'Produto criado com sucesso.');
     }
 
     public function show(Produto $produto)
@@ -76,16 +72,9 @@ class ProdutoController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Produto $produto)
+    public function update(UpdateProdutoRequest $request, Produto $produto)
     {
-        $this->authorize('update', $produto);
-
-        $dados = $request->validate([
-            'nome' => ['required', 'string', 'max:255'],
-            'descricao' => ['required', 'string', 'max:255'],
-            'preco' => ['required', 'numeric', 'min:0'],
-        ]);
-
+        $dados = $request->validated();
         $dados['ativo'] = $request->boolean('ativo');
 
         $produto->update($dados);
@@ -108,6 +97,8 @@ class ProdutoController extends Controller
 
         $produto->delete();
 
-        return redirect()->route('produtos.index')->with('success', 'Produto exclu?do com sucesso.');
+        return redirect()
+            ->route('produtos.index')
+            ->with('success', 'Produto exclu?do com sucesso.');
     }
 }

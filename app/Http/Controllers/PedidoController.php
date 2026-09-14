@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StorePedidoRequest;
 use App\Models\Pedido;
 use App\Models\Produto;
 use Illuminate\Http\Request;
@@ -34,23 +35,9 @@ class PedidoController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StorePedidoRequest $request)
     {
-        $this->authorize('create', Pedido::class);
-
-        $dados = $request->validate([
-            'endereco_id' => ['required', 'integer'],
-            'itens' => ['required', 'array', 'min:1'],
-            'itens.*.produto_id' => [
-                'required',
-                'integer',
-                'distinct',
-                'exists:produto,id',
-            ],
-            'itens.*.quantidade' => ['required', 'integer', 'min:1', 'max:99'],
-            'itens.*.observacao' => ['nullable', 'string', 'max:150'],
-        ]);
-
+        $dados = $request->validated();
         $cliente = $request->user();
 
         $pedido = DB::transaction(function () use ($cliente, $dados) {

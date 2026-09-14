@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UpdatePedidoStatusRequest;
 use App\Models\Pedido;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 
 class AdminPedidoController extends Controller
 {
@@ -40,23 +40,9 @@ class AdminPedidoController extends Controller
     /**
      * Update the status of the specified resource.
      */
-    public function updateStatus(Request $request, Pedido $pedido)
+    public function updateStatus(UpdatePedidoStatusRequest $request, Pedido $pedido)
     {
-        $this->authorize('updateStatus', $pedido);
-
-        $dados = $request->validate([
-            'status' => [
-                'required',
-                Rule::in([
-                    'aguardando_confirmacao',
-                    'em_preparo',
-                    'enviado',
-                    'entregue',
-                    'cancelado',
-                ]),
-            ],
-        ]);
-
+        $dados = $request->validated();
         $status = $dados['status'];
 
         $updates = ['status' => $status];

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreEnderecoRequest;
+use App\Http\Requests\UpdateEnderecoRequest;
 use App\Models\Endereco;
 use Illuminate\Http\Request;
 
@@ -17,19 +19,9 @@ class EnderecoController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(StoreEnderecoRequest $request)
     {
-        $dados = $request->validate([
-            'logradouro' => 'required|string|max:60',
-            'numero' => 'required|string|max:15',
-            'bairro' => 'required|string|max:30',
-            'cidade' => 'required|string|max:30',
-            'estado' => 'required|string|max:30',
-            'cep' => 'required|string|max:9',
-            'complemento' => 'nullable|string|max:100'
-        ]);
-
-        $request->user()->enderecos()->create($dados);
+        $request->user()->enderecos()->create($request->validated());
 
         return redirect()
             ->route('enderecos.index')
@@ -55,21 +47,9 @@ class EnderecoController extends Controller
         return view('enderecos.edit', compact('endereco'));
     }
 
-    public function update(Request $request, Endereco $endereco)
+    public function update(UpdateEnderecoRequest $request, Endereco $endereco)
     {
-        $this->authorize('update', $endereco);
-
-        $dados = $request->validate([
-            'logradouro' => 'required|string|max:60',
-            'numero' => 'required|string|max:15',
-            'bairro' => 'required|string|max:30',
-            'cidade' => 'required|string|max:30',
-            'estado' => 'required|string|max:30',
-            'cep' => 'required|string|max:9',
-            'complemento' => 'nullable|string|max:100',
-        ]);
-
-        $endereco->update($dados);
+        $endereco->update($request->validated());
 
         return redirect()
             ->route('enderecos.index')
