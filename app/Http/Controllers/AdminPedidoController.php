@@ -8,51 +8,69 @@ use Illuminate\Validation\Rule;
 
 class AdminPedidoController extends Controller
 {
-    private const STATUS_VALIDOS = [
-        'aguardando_confirmacao',
-        'confirmado',
-        'em_preparo',
-        'enviado',
-        'entregue',
-        'cancelado',
-    ];
-
-    public function index()
+    /**
+     * Display a listing of the resource.
+     */
+    public function index(Request $request)
     {
-        return view('admin.pedidos.index', [
-            'pedidos' => Pedido::with('cliente')
-                ->orderByDesc('criado_em')
-                ->get(),
-        ]);
+        $this->authorize('viewAny', Pedido::class);
+
+        $status = $request->query('status');
+
+        $pedidos = Pedido::with(['cliente', 'endereco', 'itens.produto'])
+            ->when($status, fn ($query) => $query->where('status', $status))
+            ->orderByDesc('criado_em')
+            ->paginate(15);
+
+        return view('admin.pedidos.index', compact('pedidos', 'status'));
     }
 
+    /**
+     * Display the specified resource.
+     */
     public function show(Pedido $pedido)
     {
+        $this->authorize('view', $pedido);
+
         $pedido->load(['cliente', 'endereco', 'itens.produto']);
 
         return view('admin.pedidos.show', compact('pedido'));
     }
 
+    /**
+     * Update the status of the specified resource.
+     */
     public function updateStatus(Request $request, Pedido $pedido)
     {
+        $this->authorize('updateStatus', $pedido);
+
         $dados = $request->validate([
-            'status' => ['required', 'string', Rule::in(self::STATUS_VALIDOS)],
+            'status' => [
+                'required',
+                Rule::in([
+                    'aguardando_confirmacao',
+                    'em_preparo',
+                    'enviado',
+                    'entregue',
+                    'cancelado',
+                ]),
+            ],
         ]);
 
-        $atualizacoes = ['status' => $dados['status']];
+        $status = $dados['status'];
 
-        if ($dados['status'] === 'confirmado' && $pedido->confirmado_em === null) {
-            $atualizacoes['confirmado_em'] = now();
+        $updates = ['status' => $status];
+
+        if ($status === 'em_preparo' && ! $pedido->confirmado_em) {
+            $updates['confirmado_em'] = now();
+        } elseif ($status === 'enviado' && ! $pedido->enviado_em) {
+            $updates['enviado_em'] = now();
         }
 
-        if ($dados['status'] === 'enviado' && $pedido->enviado_em === null) {
-            $atualizacoes['enviado_em'] = now();
-        }
-
-        $pedido->update($atualizacoes);
+        $pedido->update($updates);
 
         return redirect()
             ->route('admin.pedidos.show', $pedido)
-            ->with('success', 'Status do pedido atualizado com sucesso.');
+            ->with('success', "Status do pedido atualizado para '{$status}'.");
     }
 }

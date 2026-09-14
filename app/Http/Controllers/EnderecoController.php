@@ -17,10 +17,8 @@ class EnderecoController extends Controller
         ]);
     }
 
-
     public function store(Request $request)
     {
-
         $dados = $request->validate([
             'logradouro' => 'required|string|max:60',
             'numero' => 'required|string|max:15',
@@ -34,8 +32,8 @@ class EnderecoController extends Controller
         $request->user()->enderecos()->create($dados);
 
         return redirect()
-                  ->route('enderecos.index')
-                  ->with('success', 'Endereço cadastrado com sucesso.');
+            ->route('enderecos.index')
+            ->with('success', 'Endere?o cadastrado com sucesso.');
     }
 
     public function create()
@@ -43,30 +41,23 @@ class EnderecoController extends Controller
         return view('enderecos.create');
     }
 
-
     public function show(Endereco $endereco)
     {
+        $this->authorize('view', $endereco);
+
         return view('enderecos.show', compact('endereco'));
     }
 
-
-    public function edit(Request $request, Endereco $endereco)
+    public function edit(Endereco $endereco)
     {
-        abort_unless(
-              $endereco->id_cliente === $request->user()->id,
-              403,
-          );
+        $this->authorize('update', $endereco);
 
         return view('enderecos.edit', compact('endereco'));
     }
 
-
     public function update(Request $request, Endereco $endereco)
     {
-        abort_unless(
-              $endereco->id_cliente === $request->user()->id,
-              403,
-          );
+        $this->authorize('update', $endereco);
 
         $dados = $request->validate([
             'logradouro' => 'required|string|max:60',
@@ -82,20 +73,17 @@ class EnderecoController extends Controller
 
         return redirect()
             ->route('enderecos.index')
-            ->with('success', 'Endereço atualizado com sucesso.');
+            ->with('success', 'Endere?o atualizado com sucesso.');
     }
 
-    public function destroy(Endereco $endereco, Request $request)
+    public function destroy(Endereco $endereco)
     {
-        abort_unless(
-              $endereco->id_cliente === $request->user()->id,
-              403,
-          );
+        $this->authorize('delete', $endereco);
 
         $endereco->delete();
 
         return redirect()
             ->route('enderecos.index')
-            ->with('success', 'Endereço excluído com sucesso.');
+            ->with('success', 'Endere?o exclu?do com sucesso.');
     }
 }

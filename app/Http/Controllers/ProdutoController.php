@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Produto;
 use App\Exceptions\ProdutoComPedidosVinculadosException;
+use App\Models\Produto;
 use Illuminate\Http\Request;
 
 class ProdutoController extends Controller
@@ -14,7 +14,7 @@ class ProdutoController extends Controller
     public function index()
     {
         return view('produtos.index', [
-        'produtos' => Produto::where('ativo', true)->get(),
+            'produtos' => Produto::where('ativo', true)->get(),
         ]);
     }
 
@@ -29,6 +29,8 @@ class ProdutoController extends Controller
 
     public function create()
     {
+        $this->authorize('create', Produto::class);
+
         return view('produtos.create');
     }
 
@@ -37,23 +39,24 @@ class ProdutoController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('create', Produto::class);
+
         $dados = $request->validate([
-            'nome'=>'required|string|max:255',
-            'descricao'=>'required|string|max:255',
-            'preco'=>'required|numeric|min:0',
-            'ativo'=>'sometimes|boolean'
+            'nome' => 'required|string|max:255',
+            'descricao' => 'required|string|max:255',
+            'preco' => 'required|numeric|min:0',
+            'ativo' => 'sometimes|boolean',
         ]);
 
-        $produtos = Produto::create([
+        $produto = Produto::create([
             'nome' => $dados['nome'],
             'descricao' => $dados['descricao'],
             'preco' => $dados['preco'],
-            'ativo' => $dados['ativo'] ?? false
+            'ativo' => $dados['ativo'] ?? false,
         ]);
 
-        return redirect()->back();
+        return redirect()->route('produtos.index')->with('success', 'Produto criado com sucesso.');
     }
-
 
     public function show(Produto $produto)
     {
@@ -65,12 +68,17 @@ class ProdutoController extends Controller
      */
     public function edit(Produto $produto)
     {
+        $this->authorize('update', $produto);
+
         return view('produtos.edit', compact('produto'));
     }
 
-
+    /**
+     * Update the specified resource in storage.
+     */
     public function update(Request $request, Produto $produto)
     {
+        $this->authorize('update', $produto);
 
         $dados = $request->validate([
             'nome' => ['required', 'string', 'max:255'],
@@ -78,15 +86,13 @@ class ProdutoController extends Controller
             'preco' => ['required', 'numeric', 'min:0'],
         ]);
 
-        // Checkbox desmarcado não é enviado pelo navegador; boolean() o transforma em false.
         $dados['ativo'] = $request->boolean('ativo');
 
         $produto->update($dados);
 
         return redirect()
-              ->route('produtos.index')
-              ->with('success', 'Produto atualizado com sucesso.');
-
+            ->route('produtos.index')
+            ->with('success', 'Produto atualizado com sucesso.');
     }
 
     /**
@@ -94,12 +100,14 @@ class ProdutoController extends Controller
      */
     public function destroy(Produto $produto)
     {
+        $this->authorize('delete', $produto);
+
         if ($produto->itensPedido()->exists()) {
-                throw new ProdutoComPedidosVinculadosException;
+            throw new ProdutoComPedidosVinculadosException;
         }
 
         $produto->delete();
 
-        return redirect()->route('produtos.index');
+        return redirect()->route('produtos.index')->with('success', 'Produto exclu?do com sucesso.');
     }
 }

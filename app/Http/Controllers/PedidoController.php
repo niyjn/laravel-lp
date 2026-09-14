@@ -4,27 +4,24 @@ namespace App\Http\Controllers;
 
 use App\Models\Pedido;
 use App\Models\Produto;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
-
-use Illuminate\Http\Request;
 
 class PedidoController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-     public function index(Request $request)
-      {
-          return view('pedidos.index', [
-              'pedidos' => $request->user()
-                  ->pedidos()
-                  ->orderByDesc('criado_em')
-                  ->get(),
-          ]);
-      }
-
-
+    public function index(Request $request)
+    {
+        return view('pedidos.index', [
+            'pedidos' => $request->user()
+                ->pedidos()
+                ->orderByDesc('criado_em')
+                ->get(),
+        ]);
+    }
 
     /**
      * Show the form for creating a new resource.
@@ -39,9 +36,10 @@ class PedidoController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('create', Pedido::class);
+
         $dados = $request->validate([
             'endereco_id' => ['required', 'integer'],
-
             'itens' => ['required', 'array', 'min:1'],
             'itens.*.produto_id' => [
                 'required',
@@ -56,94 +54,63 @@ class PedidoController extends Controller
         $cliente = $request->user();
 
         $pedido = DB::transaction(function () use ($cliente, $dados) {
+            $endereco = $cliente->enderecos()
+                ->findOrFail($dados['endereco_id']);
 
-                  $endereco = $cliente->enderecos()
-                      ->findOrFail($dados['endereco_id']);
+            $pedido = Pedido::create([
+                'id_cliente' => $cliente->id,
+                'id_endereco' => $endereco->id,
+                'status' => 'aguardando_confirmacao',
+                'valor' => 0,
+            ]);
 
-                  // Cria o "cabeçalho" do pedido.
-                  $pedido = Pedido::create([
-                      'id_cliente' => $cliente->id,
-                      'id_endereco' => $endereco->id,
-                      'status' => 'aguardando_confirmacao',
-                      'valor' => 0,
-                  ]);
+            $valorTotal = 0;
 
-                  $valorTotal = 0;
+            foreach ($dados['itens'] as $item) {
+                $produto = Produto::where('ativo', true)
+                    ->find($item['produto_id']);
 
-                  foreach ($dados['itens'] as $item) {
-                      // Preço oficial vem do banco.
-                      $produto = Produto::where('ativo', true)
-                          ->find($item['produto_id']);
+                if (! $produto) {
+                    throw ValidationException::withMessages([
+                        'itens' => 'Um dos produtos n?o est? mais dispon?vel.',
+                    ]);
+                }
 
-                      if (! $produto) {
-                          throw ValidationException::withMessages([
-                              'itens' => 'Um dos produtos não está mais disponível.',
-                          ]);
-                      }
+                $quantidade = $item['quantidade'];
+                $precoUnitario = $produto->preco;
+                $subtotal = round($precoUnitario * $quantidade, 2);
 
-                      $quantidade = $item['quantidade'];
-                      $precoUnitario = $produto->preco;
-                      $subtotal = round($precoUnitario * $quantidade, 2);
+                $pedido->itens()->create([
+                    'id_produto' => $produto->id,
+                    'quantidade' => $quantidade,
+                    'preco_unitario' => $precoUnitario,
+                    'observacao' => $item['observacao'] ?? null,
+                ]);
 
+                $valorTotal += $subtotal;
+            }
 
-                      $pedido->itens()->create([
-                          'id_produto' => $produto->id,
-                          'quantidade' => $quantidade,
-                          'preco_unitario' => $precoUnitario,
-                          'observacao' => $item['observacao'] ?? null,
-                      ]);
+            $pedido->update([
+                'valor' => $valorTotal,
+            ]);
 
-                      $valorTotal += $subtotal;
-                  }
+            return $pedido;
+        });
 
-                  $pedido->update([
-                      'valor' => $valorTotal,
-                  ]);
-
-                  return $pedido;
-              });
-
-              return redirect()
-                  ->route('pedidos.show', $pedido)
-                  ->with('success', "Pedido #{$pedido->id} criado com sucesso.");
+        return redirect()
+            ->route('pedidos.show', $pedido)
+            ->with('success', "Pedido #{$pedido->id} criado com sucesso.");
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Request $request, Pedido $pedido)
+    public function show(Pedido $pedido)
     {
-        abort_unless(
-                  $pedido->id_cliente === $request->user()->id,
-                  403,
-              );
+        $this->authorize('view', $pedido);
 
         $pedido->load(['itens.produto', 'endereco']);
 
         return view('pedidos.show', compact('pedido'));
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(pedido $pedido)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, pedido $pedido)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(pedido $pedido)
-    {
-        //
     }
 }
