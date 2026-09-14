@@ -10,11 +10,13 @@ use App\Http\Controllers\{
     ProdutoController
 };
 
+// Landing page / vitrine publica
 Route::get('/', [ProdutoController::class, 'landing'])->name('home');
 
 // Breeze Authentication Routes
 require __DIR__.'/auth.php';
 
+// Rotas autenticadas genericas (Perfil e Enderecos)
 Route::middleware('auth')->group(function () {
     Route::get('/perfil', [ClienteController::class, 'profile'])
         ->name('perfil');
@@ -22,7 +24,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/perfil', [ClienteController::class, 'update'])
         ->name('perfil.update');
 
-    // Enderecos
+    // Enderecos (protegidos por auth e policies)
     Route::get('/enderecos', [EnderecoController::class, 'index'])
         ->name('enderecos.index');
 
@@ -41,7 +43,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/enderecos/{endereco}', [EnderecoController::class, 'destroy'])
         ->name('enderecos.destroy');
 
-    // Pedidos
+    // Pedidos do cliente
     Route::get('/pedidos', [PedidoController::class, 'index'])
         ->name('pedidos.index');
 
@@ -49,7 +51,8 @@ Route::middleware('auth')->group(function () {
         ->name('pedidos.show');
 });
 
-Route::middleware(['auth', 'can:gerenciar-produtos'])->group(function () {
+// Gestao Operacional de Pedidos (Acesso para Admin e Gerente)
+Route::middleware(['auth', 'role:admin,gerente'])->group(function () {
     Route::get('/admin/pedidos', [AdminPedidoController::class, 'index'])
         ->name('admin.pedidos.index');
 
@@ -58,32 +61,34 @@ Route::middleware(['auth', 'can:gerenciar-produtos'])->group(function () {
 
     Route::patch('/admin/pedidos/{pedido}/status', [AdminPedidoController::class, 'updateStatus'])
         ->name('admin.pedidos.status.update');
+});
 
-    // Produtos Admin
+// Gestao de Produtos (Acesso exclusivo para Administrador)
+Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/produtos/create', [ProdutoController::class, 'create'])
         ->name('produtos.create');
 
     Route::post('/produtos', [ProdutoController::class, 'store'])
         ->name('produtos.store');
 
+    Route::get('/produtos/{produto}/edit', [ProdutoController::class, 'edit'])
+        ->name('produtos.edit');
+
     Route::patch('/produtos/{produto}', [ProdutoController::class, 'update'])
         ->name('produtos.update');
 
     Route::delete('/produtos/{produto}', [ProdutoController::class, 'destroy'])
         ->name('produtos.destroy');
-
-    Route::get('/produtos/{produto}/edit', [ProdutoController::class, 'edit'])
-        ->name('produtos.edit');
 });
 
-// Produtos user
+// Catalogo de produtos publico
 Route::get('/produtos', [ProdutoController::class, 'index'])
     ->name('produtos.index');
 
 Route::get('/produtos/{produto}', [ProdutoController::class, 'show'])
     ->name('produtos.show');
 
-// Pedido & checkout
+// Checkout e criacao de pedidos
 Route::get('/checkout', [PedidoController::class, 'create'])
     ->middleware('auth')
     ->name('checkout');
