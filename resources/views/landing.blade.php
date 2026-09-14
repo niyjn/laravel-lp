@@ -16,40 +16,47 @@
                   Baha Lanches
               </a>
 
-              <nav class="flex gap-8">
+              <nav class="flex flex-wrap items-center gap-3">
                   @guest
-                       <a href="{{ route('login') }}" class="rounded-lg bg-red-950 px-4 py-2 font-bold text-white">
+                       <a href="{{ route('login') }}" class="rounded-lg bg-red-950 px-4 py-2 font-bold text-white hover:bg-red-900 transition">
                            Entrar
                        </a>
 
-                       <a
-                           href="{{ route('register') }}"
-                           class="rounded-lg bg-red-950 px-4 py-2 font-bold text-white"
-                       >
+                       <a href="{{ route('register') }}" class="rounded-lg bg-red-950 px-4 py-2 font-bold text-white hover:bg-red-900 transition">
                            Criar conta
                        </a>
                    @endguest
 
                    @auth
-                       <a href="{{ route('perfil') }}" class="rounded-lg bg-red-950 px-4 py-2 font-bold text-white" >
+                       <a href="{{ route('perfil') }}" class="rounded-lg bg-red-950 px-4 py-2 font-bold text-white hover:bg-red-900 transition">
                            Meu perfil
                        </a>
 
-                       <a href="{{ route('pedidos.index') }}" class="rounded-lg bg-red-950 px-4 py-2 font-bold text-white">
+                       <a href="{{ route('pedidos.index') }}" class="rounded-lg bg-red-950 px-4 py-2 font-bold text-white hover:bg-red-900 transition">
                            Meus pedidos
                        </a>
+
+                       @if (auth()->user()->isGerente() || auth()->user()->isAdmin())
+                           <a href="{{ route('admin.pedidos.index') }}" class="rounded-lg bg-orange-700 px-4 py-2 font-bold text-white hover:bg-orange-600 transition flex items-center gap-1.5">
+                               <span>Painel Pedidos</span>
+                               <span class="rounded bg-black/40 px-1.5 py-0.5 text-xs uppercase">{{ auth()->user()->role }}</span>
+                           </a>
+                       @endif
+
+                       @can('create', App\Models\Produto::class)
+                           <a href="{{ route('produtos.index') }}" class="rounded-lg bg-red-800 px-4 py-2 font-bold text-white hover:bg-red-700 transition flex items-center gap-1.5">
+                               <span>Gest?o Produtos</span>
+                               <span class="rounded bg-black/40 px-1.5 py-0.5 text-xs uppercase">Admin</span>
+                           </a>
+                       @endcan
+
+                       <form method="POST" action="{{ route('logout') }}" class="inline">
+                           @csrf
+                           <button type="submit" class="rounded-lg bg-black/30 px-3 py-2 text-sm font-bold text-white hover:bg-black/50 transition">
+                               Sair
+                           </button>
+                       </form>
                    @endauth
-
-                   @can('gerenciar-produtos')
-                       <a href="{{ route('admin.pedidos.index') }}" class="rounded-lg bg-red-950 px-4 py-2 font-bold text-white" >
-                           Pedidos admin
-                       </a>
-
-                       <a href="{{ route('produtos.index') }}" class="rounded-lg bg-red-950 px-4 py-2 font-bold text-white" >
-                           Produtos admin
-                       </a>
-                   @endcan
-
 
                   <button
                        id="botao-carrinho"
@@ -60,7 +67,6 @@
                    >
                        Carrinho (<span id="quantidade-carrinho">0</span>)
                    </button>
-
               </nav>
           </div>
       </header>

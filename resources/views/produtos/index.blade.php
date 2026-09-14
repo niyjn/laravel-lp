@@ -23,7 +23,7 @@
                 <p class="mt-3 text-red-100">Conheça os lanches disponíveis hoje.</p>
             </div>
 
-            @can('gerenciar-produtos')
+            @can('create', App\Models\Produto::class)
                 <a href="{{ route('produtos.create') }}" class="rounded-lg bg-yellow-500 px-5 py-3 font-bold text-black transition hover:bg-yellow-400">
                     + Novo produto
                 </a>
@@ -47,7 +47,7 @@
 
                         <div class="mt-5 flex items-center justify-between gap-3">
                             <a href="{{ route('produtos.show', $produto) }}" class="font-bold text-red-950 hover:underline">Ver detalhes</a>
-                            @can('gerenciar-produtos')
+                            @can('create', App\Models\Produto::class)
                                 <button
                                     type="button"
                                     class="js-abrir-edicao rounded-lg bg-red-950 px-4 py-2 text-sm font-bold text-white transition hover:bg-red-900"
@@ -70,7 +70,7 @@
         </section>
     </main>
 
-    @can('gerenciar-produtos')
+    @can('create', App\Models\Produto::class)
         <div id="modal-edicao" class="fixed inset-0 z-50 hidden items-end justify-center bg-black/70 p-4 sm:items-center" aria-hidden="true">
             <section role="dialog" aria-modal="true" aria-labelledby="titulo-modal-edicao" class="w-full max-w-xl rounded-2xl bg-white p-6 text-black shadow-2xl sm:p-8">
                 <div class="flex items-start justify-between gap-4">

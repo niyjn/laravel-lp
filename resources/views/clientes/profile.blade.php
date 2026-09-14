@@ -34,14 +34,50 @@
         @endif
 
         <section class="rounded-2xl bg-white p-6 text-black shadow-2xl sm:p-8">
-            <div class="flex items-center gap-4 border-b border-gray-200 pb-6">
-                <div class="flex h-14 w-14 items-center justify-center rounded-full bg-yellow-500 font-jersey text-3xl text-red-950">
-                    {{ mb_strtoupper(mb_substr($cliente->nome, 0, 1)) }}
+            <div class="flex flex-wrap items-center justify-between gap-4 border-b border-gray-200 pb-6">
+                <div class="flex items-center gap-4">
+                    <div class="flex h-14 w-14 items-center justify-center rounded-full bg-yellow-500 font-jersey text-3xl text-red-950">
+                        {{ mb_strtoupper(mb_substr($cliente->nome, 0, 1)) }}
+                    </div>
+                    <div>
+                        <h2 class="font-jersey text-3xl text-red-950">{{ $cliente->nome }}</h2>
+                        <p class="text-sm text-gray-600">{{ $cliente->email }}</p>
+                    </div>
                 </div>
                 <div>
-                    <h2 class="font-jersey text-3xl text-red-950">{{ $cliente->nome }}</h2>
-                    <p class="text-sm text-gray-600">{{ $cliente->email }}</p>
+                    @if ($cliente->isAdmin())
+                        <span class="inline-flex items-center rounded-full bg-red-100 px-3 py-1 text-xs font-bold text-red-800 border border-red-300">
+                            ??? Administrador (Acesso Total)
+                        </span>
+                    @elseif ($cliente->isGerente())
+                        <span class="inline-flex items-center rounded-full bg-amber-100 px-3 py-1 text-xs font-bold text-amber-800 border border-amber-300">
+                            ?? Gerente Operacional (Gest?o de Pedidos)
+                        </span>
+                    @else
+                        <span class="inline-flex items-center rounded-full bg-green-100 px-3 py-1 text-xs font-bold text-green-800 border border-green-300">
+                            ?? Cliente (Pedidos e Endere?os)
+                        </span>
+                    @endif
                 </div>
+            </div>
+
+            <div class="mt-4 flex flex-wrap gap-2">
+                <a href="{{ route('enderecos.index') }}" class="rounded-lg bg-yellow-500 px-4 py-2 text-sm font-bold text-red-950 hover:bg-yellow-400 transition">
+                    ?? Meus Endere?os
+                </a>
+                <a href="{{ route('pedidos.index') }}" class="rounded-lg bg-yellow-500 px-4 py-2 text-sm font-bold text-red-950 hover:bg-yellow-400 transition">
+                    ?? Meus Pedidos
+                </a>
+                @if ($cliente->isGerente() || $cliente->isAdmin())
+                    <a href="{{ route('admin.pedidos.index') }}" class="rounded-lg bg-orange-600 px-4 py-2 text-sm font-bold text-white hover:bg-orange-500 transition">
+                        ?? Painel Operacional de Pedidos
+                    </a>
+                @endif
+                @can('create', App\Models\Produto::class)
+                    <a href="{{ route('produtos.index') }}" class="rounded-lg bg-red-900 px-4 py-2 text-sm font-bold text-white hover:bg-red-800 transition">
+                        ?? Gerenciar Card?pio
+                    </a>
+                @endcan
             </div>
 
             <form method="POST" action="{{ route('perfil.update') }}" class="mt-8 space-y-5">
